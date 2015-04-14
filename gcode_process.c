@@ -26,6 +26,7 @@
 #include	"clock.h"
 #include	"config_wrapper.h"
 #include	"home.h"
+#include	"sd_print.h"
 
 /// the current tool
 uint8_t tool;
@@ -372,6 +373,60 @@ void process_gcode_command() {
 				//? Undocumented.
 				tool = next_tool;
 				break;
+
+#ifdef SD_PRINTING
+
+			case 20:
+				//? --- M20 - List SD card ---
+				//? 
+				//? List all files in the root of the SD card, typical output:
+				//? ok Files: {SQUARE.G,SQCOM.G,}
+				list_sd_card();
+				break;
+
+			case 21:
+				//? --- M21 -  Initialize SD card ---
+				//?
+				//? Happens by default at power-up, needs to be called again whenever a 
+				//? new SD card is inserted.
+				init_sd_card();
+				break;
+
+			case 23:
+				//? --- M23 -  Select SD file ---
+				//?
+				//? Selects the specifies filename, e.g.:
+				//? M23 filename.gco
+				select_sd_file();
+				break;
+
+			case 24:
+				//? --- M24 -  Start/resume SD print ---
+				//?
+				//? Starts printing the SD file selected by M23
+				start_sd_print();
+				break;
+
+			case 25:
+				//? --- M25 -  Pause SD print ---
+				//?
+				//? Pauses printing the SD file
+				pause_sd_print();
+				break;
+
+			case 27:
+				//? --- M27 -  Report SD print status ---
+				//?
+				report_sd_status();
+				break;
+
+			case 32:
+				//? --- M32 -  select and start SD print ---
+				//?
+				select_and_start_sd_print();
+				break;
+
+#endif // #ifdef SD_PRINTING
 
 			case 82:
 				//? --- M82 - Set E codes absolute ---
