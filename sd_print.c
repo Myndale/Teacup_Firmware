@@ -1,3 +1,4 @@
+#include	"config.h"
 #include	"serial.h"
 #include	"sermsg.h"
 #include	"gcode_parse.h"
@@ -30,44 +31,31 @@ void spi_init()
   SPCR = _BV(MSTR) | _BV(SPE);      // Master mode, SPI enable, clock speed MCU_XTAL/4
 }
 
-void test_setup()
-{
-  //Serial.begin(115200);
-  serial_writestr_P(PSTR("\nStarting...\n"));
-  
-  PFF_PFF();
-  spi_init();
-  PFF_begin(4, rx, tx);
-  
-  serial_writestr_P(PSTR("All good!\n"));
-  
-  while (true)
-  {
-    FILINFO fnfo;
-    int err = PFF_read_dir(&fnfo);
-    if ((err!=0) || (fnfo.fname[0] == 0))
-      break;
-    serial_writestr_P(PSTR("Name: "));
-    serial_writestr(fnfo.fname);
-    if (fnfo.fattrib & AM_DIR)
-      serial_writestr_P(PSTR(" is a directory"));
-    else
-      serial_writestr_P(PSTR(" is a file"));
-    serial_writestr_P(PSTR("\n"));
-  }
-  
-  serial_writestr_P(PSTR("\nFinished SD card dump!\n"));
-}
-
 void list_sd_card()
 {
-	serial_writestr_P(PSTR("list_sd_card!"));
+	serial_writestr_P(PSTR("Files: {"));
+	PFF_rewind_dir();
+	while (true)
+	{
+		FILINFO fnfo;
+		int err = PFF_read_dir(&fnfo);
+		if ((err != 0) || (fnfo.fname[0] == 0))
+			break;
+		if (!(fnfo.fattrib & AM_DIR))
+		{
+			serial_writestr(fnfo.fname);
+			serial_writestr_P(PSTR(","));
+		}
+	}
+	serial_writestr_P(PSTR("}"));	
 }
 
-void init_sd_card()
+void init_sd_card(uint8_t suppress_output)
 {
-	serial_writestr_P(PSTR("init_sd_card!"));
-	test_setup();
+	spi_init();
+	PFF_begin(4, rx, tx);
+	if (!suppress_output)
+		serial_writestr_P(PSTR("sd card initialized"));
 }
 
 void select_sd_file()
@@ -93,14 +81,6 @@ void report_sd_status()
 void select_and_start_sd_print()
 {
 	serial_writestr_P(PSTR("select_and_start_sd_print!"));
-}
-
-void strobe(int pin)
-{
-  /*digitalWrite(pin, HIGH);
-  pinMode(pin, OUTPUT);
-  digitalWrite(pin, LOW);
-  digitalWrite(pin, HIGH);*/
 }
 
 #endif // #ifdef SD_PRINTING

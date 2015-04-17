@@ -4,7 +4,7 @@
 #ifdef SD_PRINTING
 
 void list_sd_card();
-void init_sd_card();
+void init_sd_card(uint8_t suppress_output);
 void select_sd_file();
 void start_sd_print();
 void pause_sd_print();

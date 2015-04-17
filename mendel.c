@@ -62,13 +62,20 @@
   const char PROGMEM canned_gcode_P[] = CANNED_CYCLE;
 #endif
 
+// don't disable SPI if we need to print off the sd card
+#ifdef SD_PRINTING
+#	define SPI_MASK 0
+#else
+#	define SPI_MASK MASK(PRSPI)
+#endif
+
 /// initialise all I/O - set pins as input or output, turn off unused subsystems, etc
 void io_init(void) {
 	// disable modules we don't use
 	#ifdef PRR
-		PRR = MASK(PRTWI) | MASK(PRADC) | MASK(PRSPI);
+		PRR = MASK(PRTWI) | MASK(PRADC) | SPI_MASK;
 	#elif defined PRR0
-		PRR0 = MASK(PRTWI) | MASK(PRADC) | MASK(PRSPI);
+		PRR0 = MASK(PRTWI) | MASK(PRADC) | SPI_MASK;
 		#if defined(PRUSART3)
 			// don't use USART2 or USART3- leave USART1 for GEN3 and derivatives
 			PRR1 |= MASK(PRUSART3) | MASK(PRUSART2);
@@ -186,10 +193,14 @@ void io_init(void) {
 		WRITE(MISO, 1);				SET_INPUT(MISO);
 	#endif
 
-  #ifdef DEBUG_LED_PIN 
-    WRITE(DEBUG_LED_PIN, 0);
-    SET_OUTPUT(DEBUG_LED_PIN);
-  #endif
+	#ifdef DEBUG_LED_PIN 
+		WRITE(DEBUG_LED_PIN, 0);
+		SET_OUTPUT(DEBUG_LED_PIN);
+	#endif
+
+	#ifdef SD_PRINTING
+		init_sd_card(1);
+	#endif
 }
 
 /// Startup code, run when we come out of reset
@@ -200,9 +211,6 @@ void init(void) {
 	// set up serial
 	serial_init();
 
-    test_setup();
-
-	/*
 	// set up G-code parsing
 	gcode_init();
 
@@ -224,7 +232,6 @@ void init(void) {
 
 	// set up temperature inputs
 	temp_init();
-	*/
 
 	// enable interrupts
 	sei();
@@ -232,12 +239,11 @@ void init(void) {
 	// reset watchdog
 	wd_reset();
 
-  // prepare the power supply
-  power_init();
+	// prepare the power supply
+	power_init();
 
 	// say hi to host
 	serial_writestr_P(PSTR("start\nok\n"));
-
 }
 
 /// this is where it all starts, and ends

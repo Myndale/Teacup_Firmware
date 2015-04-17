@@ -1,3 +1,5 @@
+#ifdef SD_PRINTING
+
 /*---------------------------------------------------------------------------/
 /  Petit FatFs - FAT file system module include file  R0.01a   (C)ChaN, 2009
 /----------------------------------------------------------------------------/
@@ -235,3 +237,5 @@ FRESULT pf_readdir (DIR*, FILINFO*);	/* Read a directory item */
 
 
 #endif /* _FATFS */
+
+#endif // #ifdef SD_PRINTING

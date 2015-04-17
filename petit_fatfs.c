@@ -7,7 +7,7 @@
  * 
  * Wrapper Functions by Frank Zhao
  * 
- * mmc.c origially written by ChanN, modified by Frank Zhao
+ * mmc.c origially written by ChanN, modified by Frank Zhao. ported to teacup by Mark Feldman.
  * 
  */
 
@@ -15,36 +15,30 @@
 #include <string.h>
 #include "diskio.h"
 
+#include "config_wrapper.h"
 #include "petit_fatfs.h"
 #include "arduino.h"
 
+#ifdef SD_PRINTING
+
 FATFS fatfs_obj; // stores working copy of FS
 DIR dir_obj; // stores working copy of DIR
-char * dir_path; // stores last accessed directory path
-int MMC_CS; // stores pin number for MMC card's CS pin
+char dir_path[max_path_len]; // stores last accessed directory path
+
 void * stream_dest; // function pointer for stream destination function
-
-/*
-Constructor, do not actually call, it's been done for you
-*/
-
-void PFF_PFF()
-{
-	dir_path = (char *)calloc(max_path_len, sizeof(dir_path)); // allocate memory for path
-}
 
 /*
 Chip Select / Deselect Functions for the MMC Card's CS pin
 */
 
-void MMC_SELECT()
+void `ELECT()
 {
-	WRITE(/*MMC_CS*/DIO4, 0);
+	WRITE(SD_CS, 0);
 }
 
 void MMC_DESELECT()
 {
-	WRITE(/*MMC_CS*/DIO4, 1);
+	WRITE(SD_CS, 1);
 }
 
 ///////////////////////////////////
@@ -67,10 +61,9 @@ so this reduces redundant code.
 If error is detected due to a hardware error, you can re-call this function to re-initialize the MMC card.
 
 */
-int PFF_begin(int cs_pin, unsigned char (* rx)(void), void (* tx)(unsigned char))
+int PFF_begin(unsigned char (* rx)(void), void (* tx)(unsigned char))
 {
-	MMC_CS = cs_pin; // set CS pin number
-	SET_OUTPUT(/*MMC_CS*/DIO4); // set CS pin to output
+	SET_OUTPUT(SD_CS); // set CS pin to output
 	MMC_DESELECT();
 	disk_attach_spi_functs(tx, rx, MMC_SELECT, MMC_DESELECT); // attach SPI functions
 	
@@ -320,5 +313,7 @@ char * PFF_cur_dir()
 //////////////////////////////////////
 // end list of public methods
 //////////////////////////////////////
+
+#endif // #ifdef SD_PRINTING
 
 

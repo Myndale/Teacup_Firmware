@@ -1,3 +1,5 @@
+#ifdef SD_PRINTING
+
 /*-----------------------------------------------------------------------
 /  PFF - Low level disk interface modlue include file    (C)ChaN, 2009
 /-----------------------------------------------------------------------*/
@@ -40,3 +42,5 @@ DRESULT disk_readp (void*, DWORD, WORD, WORD);
 
 #define _DISKIO
 #endif
+
+#endif // #ifdef SD_PRINTING

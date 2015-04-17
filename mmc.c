@@ -1,5 +1,9 @@
+
 #include <avr/io.h>
+#include "config.h"
 #include "diskio.h"
+
+#ifdef SD_PRINTING
 
 /*-----------------------------------------------------------------------*/
 /* PFF - Low level disk control module                  (C)ChaN, 2009    */
@@ -265,3 +269,4 @@ DRESULT disk_readp (
 	return cnt ? RES_ERROR : RES_OK;
 }
 
+#endif // #ifdef SD_PRINTING

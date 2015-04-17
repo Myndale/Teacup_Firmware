@@ -389,7 +389,7 @@ void process_gcode_command() {
 				//?
 				//? Happens by default at power-up, needs to be called again whenever a 
 				//? new SD card is inserted.
-				init_sd_card();
+				init_sd_card(0);
 				break;
 
 			case 23:

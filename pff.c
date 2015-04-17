@@ -16,8 +16,11 @@
 / Jun 15,'09 R0.01a  Branched from FatFs R0.07b
 /----------------------------------------------------------------------------*/
 
+#include "config.h"
 #include "pff.h"		/* Petit FatFs configurations and declarations */
 #include "diskio.h"		/* Declarations of low level disk I/O functions */
+
+#ifdef SD_PRINTING
 
 
 /*--------------------------------------------------------------------------
@@ -775,3 +778,4 @@ FRESULT pf_readdir (
 
 #endif /* _FS_DIR */
 
+#endif // #ifdef SD_PRINTING

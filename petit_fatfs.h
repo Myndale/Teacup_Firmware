@@ -11,6 +11,8 @@
  * 
  */
 
+#ifdef SD_PRINTING
+
 #ifndef PFF_h
 #define PFF_h
 
@@ -21,12 +23,8 @@
 
 #define max_path_len 32
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
 void PFF_PFF();
-int PFF_begin(int, unsigned char (*)(void), void (*)(unsigned char));
+int PFF_begin(unsigned char (*)(void), void (*)(unsigned char));
 int PFF_open_file(char *);
 int PFF_read_file(char *, int, int *);
 void PFF_setup_stream(void (*)(void), void (*)(void), char (*)(char), void (*)(void), void (*)(void));
@@ -39,9 +37,6 @@ int PFF_read_dir(FILINFO *);
 int PFF_open(FILINFO *);
 char * PFF_cur_dir();
 
-#ifdef __cplusplus
-}
 #endif
 
-#endif
-
+#endif // #ifdef SD_PRINTING

@@ -1,3 +1,5 @@
+#ifdef SD_PRINTING
+
 /*-------------------------------------------*/
 /* Integer type definitions for FatFs module */
 /*-------------------------------------------*/
@@ -35,3 +37,5 @@ typedef enum { FALSE = 0, TRUE } BOOL;
 
 #define _INTEGER
 #endif
+
+#endif // #ifdef SD_PRINTING
